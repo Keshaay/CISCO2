@@ -1,7 +1,7 @@
 ###Cisco
 
 zadani se tremi sw
-
+<!--
 Adresní rozsah: 121.121.0.0/16
 
 +---------+-----+----------------+------------+---------------+---------------+---------------+----------------+
@@ -174,3 +174,4 @@ interface FastEthernet0/24
  switchport access vlan 11
  spanning-tree portfast
  no shutdown
+-->
