@@ -1,7 +1,7 @@
 ###Cisco
 
 zadani se tremi sw
-```vhdl
+```
 <!--
 Adresní rozsah: 121.121.0.0/16
 
