@@ -10,3 +10,133 @@
 | VLAN 33 | 33  | nativní VLAN   | -            | -             | -             | -             | -              |
 | Link S1-S2     | -   | 121.121.100.0  | 255.255.255.252 | 121.121.100.1 | 121.121.100.2 | -             | -              |
 +---------+-----+----------------+------------+---------------+---------------+---------------+----------------+
+
+
+Úkol 1 – VLANy Na S1 a S2:
+
+conf t
+vlan 5
+ name Red
+vlan 6
+ name Black
+vlan 7
+ name Native
+exit
+
+
+Úkol 2 – EtherChannel (LACP mezi S1 a S2)
+S1 (fa0/1, fa0/2):
+
+interface range fa0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,7
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 1 mode active
+ no shutdown
+
+interface port-channel1
+ description LACP S1<>S2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,7
+ channel-protocol lacp
+ no shutdown
+
+S2 (fa0/1, fa0/2):
+
+interface range fa0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,7
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 1 mode passive
+ no shutdown
+
+interface port-channel1
+ description LACP S2<>S1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,7
+ channel-protocol lacp
+ no shutdown
+
+
+Úkol 3 – Inter-VLAN routing mezi S1 a R1 (router-on-stick)
+S1: port fa0/13 jako trunk k R1
+
+interface fa0/13
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,7
+ switchport mode trunk
+ no shutdown
+
+R1: Sub-interface na g0/0/1
+
+interface g0/0/1
+ no shutdown
+
+interface g0/0/1.5
+ encapsulation dot1Q 5
+ ip address 15.5.5.2 255.255.255.240
+ standby 5 ip 15.5.5.2
+ standby 5 priority 110
+ standby 5 preempt
+ no shutdown
+
+interface g0/0/1.6
+ encapsulation dot1Q 6
+ ip address 15.5.6.2 255.255.255.240
+ standby 6 ip 15.5.6.2
+ standby 6 priority 110
+ standby 6 preempt
+ no shutdown
+
+interface g0/0/1.7
+ encapsulation dot1Q 7 native
+ ip address 15.5.7.1 255.255.255.240
+ no shutdown
+
+interface loopback 1
+ ip address 1.1.1.1 255.255.255.255
+ no shutdown
+
+
+Úkol 4 – Statické směrování
+Na S2 (pro správný návrat na Loopback R1):
+
+interface vlan 6
+ ip address 15.5.6.3 255.255.255.240
+ no shutdown
+ip default-gateway 15.5.6.254
+
+nebo ip route
+
+Úkol 5 – HSRP na S1 a R1
+S1 (SVI):
+
+interface vlan 5
+ ip address 15.5.5.3 255.255.255.240
+ standby 5 ip 15.5.5.1
+ standby 5 priority 100
+ standby 5 preempt
+ no shutdown
+
+interface vlan 6
+ ip address 15.5.6.3 255.255.255.240
+ standby 6 ip 15.5.6.1
+ standby 6 priority 100
+ standby 6 preempt
+ no shutdown
+
+PC (VLAN 5)
+
+IP: 15.5.5.10
+Mask: 255.255.255.240
+Gateway: 15.5.5.1
+
