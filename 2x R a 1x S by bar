@@ -1,0 +1,140 @@
+Zařízení	Rozhraní	Popis	IP adresa	Mask
+R1	  Gig0/0	      uplink na S1 (routed link)	  201.160.10.2	        255.255.255.0
+	    Loopback0	    testovací loopback	          201.160.100.1	        255.255.255.0
+S1	  Fa0/1	        uplink na R1 (routed link)	  201.160.10.1	        255.255.255.0
+	    Vlan11 (SVI)	Host VLAN	                    201.160.11.1	        255.255.255.0
+	    Vlan12 (SVI)	Switch management VLAN	      201.160.12.1	        255.255.255.0
+	    Vlan99 (SVI)	Native VLAN	                  201.160.99.1	        255.255.255.0
+S2	  Fa0/2	        trunk na S1                   —	                    —
+	    Vlan12 (SVI)	management S2	                201.160.12.12	        255.255.255.0
+	    Fa0/24	      access port pro PC (V11)	    —	                    —
+PC	  NIC	          access VLAN 11	              DHCP → 201.160.11.x	  255.255.255.0
+
+R1
+
+hostname R1
+no ip domain-lookup
+
+! DHCP pro VLAN 11
+ip dhcp pool VLAN11
+ network 201.160.11.0 255.255.255.0
+ default-router 201.160.11.1
+ domain-name vase.id.com
+
+interface GigabitEthernet0/0
+ description Uplink to S1 (routed)
+ ip address 201.160.10.2 255.255.255.0
+ no shutdown
+
+interface Loopback0
+ description Test Loopback
+ ip address 201.160.100.1 255.255.255.0
+
+
+interface Loopback0
+ description Test Loopback
+ ip address 201.160.100.1 255.255.255.0
+
+ ! Výchozí cesta – vše na S1
+ip route 0.0.0.0 0.0.0.0 201.160.10.1
+
+S1
+
+hostname S1
+no ip domain-lookup
+ip routing
+
+! VLANy
+vlan 11
+ name HOST
+vlan 12
+ name SWITCH
+vlan 99
+ name NATIVE
+
+interface Vlan11
+ description Host VLAN
+ ip address 201.160.11.1 255.255.255.0
+ ip helper-address 201.160.10.2
+ no shutdown
+
+interface Vlan12
+ description Switch management
+ ip address 201.160.12.1 255.255.255.0
+ no shutdown
+
+interface Vlan99
+ description Native VLAN
+ ip address 201.160.99.1 255.255.255.0
+ no shutdown
+
+interface FastEthernet0/1
+ description Routed uplink to R1
+ no switchport
+ ip address 201.160.10.1 255.255.255.0
+ no shutdown
+
+interface FastEthernet0/1
+ description Routed uplink to R1
+ no switchport
+ ip address 201.160.10.1 255.255.255.0
+ no shutdown
+
+interface FastEthernet0/2
+ description Trunk to S2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 11,12,99
+ no shutdown
+
+ip route 0.0.0.0 0.0.0.0 201.160.10.2
+
+S2
+
+hostname S2
+no ip domain-lookup
+
+! Vytvoření VLAN (jen management a pro PC)
+vlan 11
+vlan 12
+vlan 99
+
+! SVI pro management
+interface Vlan12
+ description Management VLAN
+ ip address 201.160.12.12 255.255.255.0
+ no shutdown
+
+! Trunk na S1
+interface FastEthernet0/24
+ description Trunk to S1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 11,12,99
+ no shutdown
+
+! Access port pro PC (VLAN11)
+interface FastEthernet0/1
+ description PC – VLAN11
+ switchport mode access
+ switchport access vlan 11
+ no shutdown
+
+! Port-security sticky pro další access porty
+interface range FastEthernet0/2 - 23
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 6
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ no shutdown
+
+! Default gateway pro management přístupy
+ip default-gateway 201.160.12.1
+
+
+
+
+
