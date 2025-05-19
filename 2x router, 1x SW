@@ -1,1 +1,89 @@
 
+
+Router R1 – router-on-a-stick (inter-VLAN routing)
+
+hostname R1
+no ip domain-lookup
+
+interface g0/0/1
+ no shutdown
+
+interface g0/0/1.7
+ encapsulation dot1Q 7
+ ip address 56.44.7.1 255.255.255.240
+ no shutdown
+
+interface g0/0/1.8
+ encapsulation dot1Q 8
+ ip address 56.44.8.1 255.255.255.240
+ no shutdown
+
+interface g0/0/1.9
+ encapsulation dot1Q 9 native
+ ip address 56.44.9.1 255.255.255.240
+ no shutdown
+
+interface loopback0
+ ip address 1.1.1.1 255.255.255.255
+
+
+Router R2 – DHCP server pro VLAN 7
+
+hostname R2
+no ip domain-lookup
+
+interface g0/0
+ ip address 56.44.7.2 255.255.255.240
+ no shutdown
+
+ip dhcp excluded-address 56.44.7.1 56.44.7.5
+
+ip dhcp pool Vlan7
+ network 56.44.7.0 255.255.255.240
+ default-router 56.44.7.1
+ domain-name 243505.com
+
+Switch S2 – VLANy, trunk, DHCP port, port security
+
+hostname S2
+no ip domain-lookup
+spanning-tree mode pvst
+
+vlan 7
+ name Yellow
+vlan 8
+ name Management
+vlan 9
+ name Native
+
+! Trunk k R1
+interface fa0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 9
+ switchport trunk allowed vlan 7,8,9
+ switchport mode trunk
+ no shutdown
+
+! Port fa0/2 k R2 (DHCP)
+interface fa0/2
+ switchport mode access
+ switchport access vlan 7
+ no shutdown
+
+! Port fa0/3 k PC – port security
+interface fa0/3
+ switchport mode access
+ switchport access vlan 7
+ switchport port-security
+ switchport port-security maximum 5
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ spanning-tree portfast
+ no shutdown
+
+PC – klient ve VLAN 7
+
+IP: 56.44.7.10
+Mask: 255.255.255.240
+Gateway: 56.44.7.1
+
