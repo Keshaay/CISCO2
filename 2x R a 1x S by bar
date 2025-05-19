@@ -1,4 +1,4 @@
-Zařízení	Rozhraní	Popis	IP adresa	Mask
+Zařízení	Rozhraní	Popis				  IP adresa		Mask
 R1	  	Gig0/0	      	uplink na S1 (routed link)	  201.160.10.2	        255.255.255.0
 	    	Loopback0	testovací loopback	          201.160.100.1	        255.255.255.0
 S1	  	Fa0/1	        uplink na R1 (routed link)	  201.160.10.1	        255.255.255.0
