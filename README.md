@@ -18,6 +18,8 @@ PC1 (VLAN 11):
 IP: 121.121.11.10/24  
 Gateway: 121.121.11.1
 
+    S1 switch
+
 hostname S1
 no ip domain-lookup
 spanning-tree mode pvst
@@ -71,6 +73,8 @@ interface Vlan22
  standby 22 preempt
  no shutdown
 
+    S2 switch
+
 hostname S2
 no ip domain-lookup
 spanning-tree mode pvst
@@ -120,6 +124,8 @@ interface GigabitEthernet1/0/3
  ip address 121.121.100.2 255.255.255.252
  no shutdown
 
+    S3 switch
+
 hostname S3
 no ip domain-lookup
 spanning-tree mode pvst
@@ -168,6 +174,8 @@ interface Port-channel2
  switchport trunk native vlan 33
  switchport trunk allowed vlan 11,22,33
  no shutdown
+
+   PC
 
 # Access port pro PC1 (VLAN 11)
 interface FastEthernet0/24
