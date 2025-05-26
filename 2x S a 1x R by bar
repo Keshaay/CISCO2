@@ -52,18 +52,18 @@ vlan 55
 vlan 66
  name Native
 
-interface Vlan11
+interface Vlan44
  description Host VLAN
  ip address 201.160.44.1 255.255.255.0
  ip helper-address 201.160.10.2
  no shutdown
 
-interface Vlan12
+interface Vlan55
  description Switch management
  ip address 201.160.55.1 255.255.255.0
  no shutdown
 
-interface Vlan99
+interface Vlan66
  description Native VLAN
  ip address 201.160.66.1 255.255.255.0
  no shutdown
