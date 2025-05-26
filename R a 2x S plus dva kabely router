@@ -1,0 +1,114 @@
+
+
+kabel navic u R1
+
+
+| Zariadenie | Rozhranie | IP adresa    | Popis               |
+| ---------- | --------- | ------------ | ------------------- |
+| R1         | G0/0/0    | 20.5.10.1/30 | Do S1 (S1 F0/1)     |
+| S1         | F0/1      | 20.5.10.2/30 | Do R1               |
+| R1         | G0/0/1    | 20.5.10.5/30 | Do S2 (S2 F0/3)     |
+| S2         | F0/3      | 20.5.10.6/30 | Do R1               |
+| VLAN 15    | PC, S2    | 20.5.15.0/24 | PC IP: 20.5.15.10   |
+| VLAN 16    | S1        | 20.5.16.0/24 |                     |
+| Loopback1  | R1        | 20.5.1.1/32  | Test ping z PC      |
+| HSRP VIP15 | S2 + S1   | 20.5.15.1    | Gateway pre VLAN 15 |
+| HSRP VIP16 | S2 + S1   | 20.5.16.1    | Gateway pre VLAN 16 |
+
+
+
+
+R1
+
+hostname R1
+no ip domain-lookup
+
+interface Loopback1
+ ip address 20.5.1.1 255.255.255.255
+
+interface GigabitEthernet0/0/0
+ description Link to S1
+ no shutdown
+!
+interface GigabitEthernet0/0/0.15
+ encapsulation dot1Q 15
+ ip address 20.5.15.2 255.255.255.0
+ standby 1 ip 20.5.15.1
+ standby 1 priority 110
+ standby 1 preempt
+!
+interface GigabitEthernet0/0/0.16
+ encapsulation dot1Q 16
+ ip address 20.5.16.2 255.255.255.0
+ standby 2 ip 20.5.16.1
+ standby 2 priority 110
+ standby 2 preempt
+
+ip routing
+
+S1 (R1–S1 Etherchannel)
+
+hostname S1
+no ip domain-lookup
+
+vlan 15
+ name Red
+vlan 16
+ name Black
+vlan 17
+ name Native
+
+interface FastEthernet0/3
+ description Link to R1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 17
+ switchport trunk allowed vlan 15,16
+ switchport mode trunk
+
+interface Vlan15
+ ip address 20.5.15.3 255.255.255.0
+ standby 1 ip 20.5.15.1
+ standby 1 priority 90
+ standby 1 preempt
+
+interface Vlan16
+ ip address 20.5.16.3 255.255.255.0
+ standby 2 ip 20.5.16.1
+ standby 2 priority 90
+ standby 2 preempt
+
+
+S2 (PC + pripojenie na R1)
+
+hostname S2
+
+vlan 15
+ name Red
+vlan 16
+ name Black
+vlan 17
+ name Native
+
+interface f0/3
+ description Link to R1
+ switchport mode trunk
+ switchport trunk allowed vlan 15,16
+ switchport trunk native vlan 17
+
+interface f0/24
+ description PC
+ switchport access vlan 15
+ switchport mode access
+
+interface vlan15
+ ip address 20.5.15.3 255.255.255.0
+ standby 1 ip 20.5.15.1
+ standby 1 priority 90
+ standby 1 preempt
+
+PC (v S2, F0/24)
+
+IP Address: 20.5.15.10
+Subnet Mask: 255.255.255.0
+Default Gateway: 20.5.15.1
+
