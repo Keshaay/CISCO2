@@ -47,7 +47,7 @@ optinal :
 3. Statické směrování
 Pokud potřebuješ statickou trasu (např. na S2, pokud by byl L3 switch):
 
-Na R1:
+Na R1: pokud S2 je L3
 
 ipv6 route ::/0 2025:5:22:12::2
 (nebo podle skutečného topologie, pravděpodobně nebude nutné, pokud všechny sítě zná R1 přímo)
