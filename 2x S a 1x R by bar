@@ -15,10 +15,10 @@ R1
 hostname R1
 no ip domain-lookup
 
-! DHCP pro VLAN 11
-ip dhcp pool VLAN11
- network 201.160.11.0 255.255.255.0
- default-router 201.160.11.1
+! DHCP pro VLAN 44
+ip dhcp pool VLAN44
+ network 201.160.44.0 255.255.255.0
+ default-router 201.160.44.1
  domain-name vase.id.com
 
 interface GigabitEthernet0/0
@@ -45,27 +45,27 @@ no ip domain-lookup
 ip routing
 
 ! VLANy
-vlan 11
- name HOST
-vlan 12
- name SWITCH
-vlan 99
- name NATIVE
+vlan 44
+ name White
+vlan 55
+ name Black
+vlan 66
+ name Native
 
 interface Vlan11
  description Host VLAN
- ip address 201.160.11.1 255.255.255.0
+ ip address 201.160.44.1 255.255.255.0
  ip helper-address 201.160.10.2
  no shutdown
 
 interface Vlan12
  description Switch management
- ip address 201.160.12.1 255.255.255.0
+ ip address 201.160.55.1 255.255.255.0
  no shutdown
 
 interface Vlan99
  description Native VLAN
- ip address 201.160.99.1 255.255.255.0
+ ip address 201.160.66.1 255.255.255.0
  no shutdown
 
 interface FastEthernet0/1
@@ -84,8 +84,8 @@ interface FastEthernet0/2
  description Trunk to S2
  switchport trunk encapsulation dot1q
  switchport mode trunk
- switchport trunk native vlan 99
- switchport trunk allowed vlan 11,12,99
+ switchport trunk native vlan 66
+ switchport trunk allowed vlan 44,55,66
  no shutdown
 
 ip route 0.0.0.0 0.0.0.0 201.160.10.2
@@ -96,14 +96,14 @@ hostname S2
 no ip domain-lookup
 
 ! Vytvoření VLAN (jen management a pro PC)
-vlan 11
-vlan 12
-vlan 99
+vlan 44
+vlan 55
+vlan 66
 
 ! SVI pro management
 interface Vlan12
  description Management VLAN
- ip address 201.160.12.12 255.255.255.0
+ ip address 201.160.55.12 255.255.255.0
  no shutdown
 
 ! Trunk na S1
@@ -111,15 +111,15 @@ interface FastEthernet0/24
  description Trunk to S1
  switchport trunk encapsulation dot1q
  switchport mode trunk
- switchport trunk native vlan 99
- switchport trunk allowed vlan 11,12,99
+ switchport trunk native vlan 66
+ switchport trunk allowed vlan 44,55,66
  no shutdown
 
 ! Access port pro PC (VLAN11)
 interface FastEthernet0/1
- description PC – VLAN11
+ description PC – VLAN44
  switchport mode access
- switchport access vlan 11
+ switchport access vlan 44
  no shutdown
 
 ! Port-security sticky pro další access porty
@@ -132,7 +132,7 @@ interface range FastEthernet0/2 - 23
  no shutdown
 
 ! Default gateway pro management přístupy
-ip default-gateway 201.160.12.1
+ip default-gateway 201.160.55.1
 
 
 
