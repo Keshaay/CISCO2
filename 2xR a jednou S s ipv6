@@ -43,6 +43,15 @@ ipv6 route ::/0 2025:5:22:12::2
 ! ipv6 dhcp relay destination 2025:5:22:20::2 Gi0/1.20
 
 
+optinal :
+3. Statické směrování
+Pokud potřebuješ statickou trasu (např. na S2, pokud by byl L3 switch):
+
+Na R1:
+
+ipv6 route ::/0 2025:5:22:12::2
+(nebo podle skutečného topologie, pravděpodobně nebude nutné, pokud všechny sítě zná R1 přímo)
+
 S2 (switch s managementem a VLANy)
 
 hostname S2
@@ -79,6 +88,8 @@ interface FastEthernet0/1
  switchport port-security maximum 3
  switchport port-security violation restrict
  switchport port-security mac-address sticky
+
+Pokud L2 switch, použij pouze ipv6 default-gateway 2025:5:22:30::1
 
 R2 (DHCPv6 server pro VLAN 20)
 Pokud máš i R2 (např. na portu G0/1.20):
