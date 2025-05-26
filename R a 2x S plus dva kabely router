@@ -77,6 +77,9 @@ interface Vlan16
  standby 2 priority 90
  standby 2 preempt
 
+ip routing
+ip route 0.0.0.0 0.0.0.0 20.5.10.1
+ip route 20.5.10.0 255.255.255.0 20.5.15-16.1?
 
 S2 (PC + pripojenie na R1)
 
@@ -105,6 +108,8 @@ interface vlan15
  standby 1 ip 20.5.15.1
  standby 1 priority 90
  standby 1 preempt
+
+ip default-gateway 20.5.15.1
 
 PC (v S2, F0/24)
 
