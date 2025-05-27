@@ -52,6 +52,10 @@ Na R1: pokud S2 je L3
 ipv6 route ::/0 2025:5:22:12::2
 (nebo podle skutečného topologie, pravděpodobně nebude nutné, pokud všechny sítě zná R1 přímo)
 
+Pokud máš L3 switch (například 3560, 3750):
+	•	Ujisti se, že je povolený sdm prefer dual-ipv4-and-ipv6 default a reload!
+	•	Povolit ipv6 unicast-routing
+
 S2 (switch s managementem a VLANy)
 
 hostname S2
