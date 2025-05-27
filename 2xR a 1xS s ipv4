@@ -1,0 +1,79 @@
+
+
+
+R2
+
+hostname R2
+no ip domain-lookup
+
+ 
+int loopback1
+ip address 56.44.100.1 255.255.255.0
+
+interface GigabitEthernet0/0
+ ip address 56.44.1.1 255.255.255.0
+ no shut
+
+ ip dhcp pool vlan 7
+ network 56.44.7.0 255.255.255.0
+ default-router 56.44.7.1
+ domain-name vaseid.com
+
+ip dhcp excluded-address 56.44.8.1
+ip dhcp excluded-address 56.44.9.1
+ip dhcp excluded-address 56.44.7.1
+
+ip routing
+ip route 56.44.7.0 255.255.255.0 56.44.1.2 
+ip route 56.44.8.0 255.255.255.0 56.44.1.2 
+ip route 56.44.9.0 255.255.255.0 56.44.1.2 
+
+R1
+
+hostname R1
+no ip domain-lookup
+
+interface GigabitEthernet0/0
+ip address 56.44.1.2 255.255.255.0
+
+interface GigabitEthernet0/1.7
+ encapsulation dot1Q 7
+ ip address 56.44.7.1 255.255.255.0
+ ip helper-address 56.44.1.1
+
+interface GigabitEthernet0/1.8
+ encapsulation dot1Q 8
+ ip address 56.44.8.1 255.255.255.0
+
+interface GigabitEthernet0/1.9
+ encapsulation dot1Q 9
+ ip address 56.44.9.1 255.255.255.0
+
+ip route 56.44.100.0 255.255.255.0 56.44.1.1 
+
+S2
+
+hostname S2
+no ip domain-lookup
+
+interface FastEthernet0/1
+ switchport mode trunk
+ switchport trunk native vlan 9
+ switchport trunk allowed vlan 7,8,9
+ 
+
+ interface Vlan8
+ ip address 56.44.8.10 255.255.255.0
+
+ip default-gateway 56.44.8.1
+
+interface FastEthernet0/10
+ switchport mode access
+ switchport access vlan 7
+ 
+ security jako  posledni
+ 
+ switchport port-security
+ switchport port-security maximum 5
+ switchport port-security mac-address sticky 
+ //switchport port-security mac-address sticky 0002.1697.0237
