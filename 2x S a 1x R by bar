@@ -37,12 +37,11 @@ interface Loopback0
  ip address 201.160.100.1 255.255.255.0
 
 
-interface Loopback0
- description Test Loopback
- ip address 201.160.100.1 255.255.255.0
-
  ! Výchozí cesta – vše na S1
 ip route 0.0.0.0 0.0.0.0 201.160.10.1
+ip route 201.160.44.0 255.255.255.0 201.160.10.1 
+ip route 201.160.55.0 255.255.255.0 201.160.10.1 
+ip route 201.160.66.0 255.255.255.0 201.160.10.1
 
 S1
 
@@ -80,20 +79,17 @@ interface FastEthernet0/1
  ip address 201.160.10.1 255.255.255.0
  no shutdown
 
-interface FastEthernet0/1
- description Routed uplink to R1
- no switchport
- ip address 201.160.10.1 255.255.255.0
- no shutdown
-
 interface FastEthernet0/2
  description Trunk to S2
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 66
  switchport trunk allowed vlan 44,55,66
+ switchport nonegotiate
  no shutdown
 
+ip route 201.160.10.0 255.255.255.0 201.160.100.1 
+ip route 201.160.100.0 255.255.255.0 201.160.10.2 
 ip route 0.0.0.0 0.0.0.0 201.160.10.2
 
 S2
@@ -107,30 +103,31 @@ vlan 55
 vlan 66
 
 ! SVI pro management
-interface Vlan12
+interface Vlan55
  description Management VLAN
- ip address 201.160.55.12 255.255.255.0
+ ip address 201.160.55.55 255.255.255.0
  no shutdown
 
 ! Trunk na S1
-interface FastEthernet0/24
+interface FastEthernet0/1
  description Trunk to S1
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 66
  switchport trunk allowed vlan 44,55,66
+ switchport nonegotiate
  no shutdown
 
 ! Access port pro PC (VLAN11)
-interface FastEthernet0/1
+interface FastEthernet0/2
  description PC – VLAN44
  switchport mode access
  switchport access vlan 44
  no shutdown
 
 ! Port-security sticky pro další access porty
-interface range FastEthernet0/2 - 23
- switchport mode access
+interface FastEthernet0/2
+ //switchport mode access
  switchport port-security
  switchport port-security maximum 6
  switchport port-security mac-address sticky
