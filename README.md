@@ -1,6 +1,8 @@
 ###Cisco
 
 zadani se tremi sw
+
+![TRI SW](https://github.com/Keshaay/CISCO2/blob/main/obrázek_2025-05-27_180453271.png)
 ```
 <!--
 Adresní rozsah: 121.121.0.0/16
