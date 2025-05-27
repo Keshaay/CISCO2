@@ -1,3 +1,9 @@
+
+
+
+![TRI SW](https://github.com/Keshaay/CISCO2/blob/main/obrázek_2025-05-27_180759641.png)
+
+
 Zařízení	Rozhraní	Popis				  IP adresa		Mask
 R1	  	Gig0/0	      	uplink na S1 (routed link)	  201.160.10.2	        255.255.255.0
 	    	Loopback0	testovací loopback	          201.160.100.1	        255.255.255.0
