@@ -33,6 +33,9 @@ R1
 hostname R1
 no ip domain-lookup
 
+interface GigabitEthernet0/1
+no shut
+
 interface GigabitEthernet0/0
 ip address 56.44.1.2 255.255.255.0
 
