@@ -35,9 +35,9 @@ ip dhcp excluded-address 2025:5:22:30::1
 ip dhcp excluded-address 2025:5:22:40::1
 
 ip routing
-ip route 56.44.7.0 255.255.255.0 56.44.1.2 
-ip route 56.44.8.0 255.255.255.0 56.44.1.2 
-ip route 56.44.9.0 255.255.255.0 56.44.1.2 
+ip route 2025:5:22:20:: /64 2025:5:22:10::2
+ip route 2025:5:22:30:: /64 2025:5:22:10::2
+ip route 2025:5:22:40:: /64 2025:5:22:10::2
 
 R1
 
@@ -45,22 +45,22 @@ hostname R1
 no ip domain-lookup
 
 interface GigabitEthernet0/0
-ip address 56.44.1.2 255.255.255.0
+ip address 2025:5:22:10::2/64
 
-interface GigabitEthernet0/1.7
- encapsulation dot1Q 7
- ip address 56.44.7.1 255.255.255.0
- ip helper-address 56.44.1.1
+interface GigabitEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 2025:5:22:20::1/64
+ ip helper-address 2025:5:22:10::1
 
-interface GigabitEthernet0/1.8
- encapsulation dot1Q 8
- ip address 56.44.8.1 255.255.255.0
+interface GigabitEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 2025:5:22:30::1/64
 
-interface GigabitEthernet0/1.9
- encapsulation dot1Q 9
- ip address 56.44.9.1 255.255.255.0
+interface GigabitEthernet0/1.40
+ encapsulation dot1Q 40
+ ip address 2025:5:22:40::1/64
 
-ip route 56.44.100.0 255.255.255.0 56.44.1.1 
+ip route 2025:5:22:100::/64 2025:5:22:10::1
 
 S2
 
@@ -73,18 +73,18 @@ no ip domain-lookup
 
 interface FastEthernet0/1
  switchport mode trunk
- switchport trunk native vlan 9
- switchport trunk allowed vlan 7,8,9
+ switchport trunk native vlan 40
+ switchport trunk allowed vlan 20,30,40
  
 
- interface Vlan8
- ip address 56.44.8.10 255.255.255.0
+ interface Vlan30
+ ip address 2025:5:22:30::30/64
 
-ip default-gateway 56.44.8.1
+ip default-gateway 2025:5:22:30::1
 
-interface FastEthernet0/10
+interface FastEthernet0/2
  switchport mode access
- switchport access vlan 7
+ switchport access vlan 20
  
  security jako  posledni
  
