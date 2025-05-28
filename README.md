@@ -15,3 +15,7 @@
 ##2x Router a 1x S s ipv6
 
 ![TRI SW](https://github.com/Keshaay/CISCO2/blob/main/obrázek_2025-05-28_130206459.png)
+
+##R a 2x S plus dva kabely v R
+
+![TRI SW](https://github.com/Keshaay/CISCO2/blob/main/obrázek_2025-05-28_132907830.png)
