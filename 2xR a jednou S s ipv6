@@ -64,6 +64,10 @@ ip route 56.44.100.0 255.255.255.0 56.44.1.1
 
 S2
 
+aby fungovalo ipv6 musi byt tento comamand:
+sdm prefer dual-ipv4-and-ipv6 default
+pote reload
+
 hostname S2
 no ip domain-lookup
 
