@@ -10,4 +10,4 @@
 
 #2x Router a 1x SW
 
-![TRI SW](https://github.com/Keshaay/CISCO2/blob/main/obrázek_2025-05-27_231200753.png)
+![TRI SW](https://github.com/Keshaay/CISCO2/blob/main/obrázek_2025-05-28_130005346.png)
