@@ -22,98 +22,121 @@ R1
 
 hostname R1
 no ip domain-lookup
-
-interface Loopback1
- ip address 20.5.1.1 255.255.255.255
-
-interface GigabitEthernet0/0/0
- description Link to S1
- no shutdown
-!
-interface GigabitEthernet0/0/0.15
- encapsulation dot1Q 15
- ip address 20.5.15.2 255.255.255.0
- standby 1 ip 20.5.15.1
- standby 1 priority 110
- standby 1 preempt
-!
-interface GigabitEthernet0/0/0.16
- encapsulation dot1Q 16
- ip address 20.5.16.2 255.255.255.0
- standby 2 ip 20.5.16.1
- standby 2 priority 110
- standby 2 preempt
-
 ip routing
 
-S1 (R1–S1 Etherchannel)
+interface Loopback1
+ ip address 15.5.100.1 255.255.255.0
+!
+interface GigabitEthernet0/0
+ ip address 15.5.10.1 255.255.255.0
+ no shut
+!
+interface GigabitEthernet0/1
+ no shut
+!
+interface GigabitEthernet0/1.5
+ encapsulation dot1Q 5
+ ip address 15.5.5.1 255.255.255.0
+ standby 5 ip 15.5.5.254
+!
+interface GigabitEthernet0/1.6
+ encapsulation dot1Q 6
+ ip address 15.5.6.1 255.255.255.0
+ standby 6 ip 15.5.6.254
+!
+interface GigabitEthernet0/1.7
+ encapsulation dot1Q 7
+ ip address 15.5.7.1 255.255.255.0
+!
+
+ip route 0.0.0.0 0.0.0.0 15.5.10.2
+
+
+S1
 
 hostname S1
 no ip domain-lookup
+ip routing
 
-vlan 15
- name Red
-vlan 16
- name Black
-vlan 17
- name Native
+!
+interface FastEthernet0/1 ---------> range 1-2. kdyby to uz neslo tak default int range f0/1-2 a nastavit znovu a pote write memory
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface FastEthernet0/2
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+
+interface Port-channel1
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+
 
 interface FastEthernet0/3
- description Link to R1
- switchport trunk encapsulation dot1q
- switchport trunk native vlan 17
- switchport trunk allowed vlan 15,16
- switchport mode trunk
+Na R1 link
+ no switchport
+ ip address 15.5.10.2 255.255.255.0
 
-interface Vlan15
- ip address 20.5.15.3 255.255.255.0
- standby 1 ip 20.5.15.1
- standby 1 priority 90
- standby 1 preempt
+interface Vlan5
+ ip address 15.5.5.3 255.255.255.0
+ standby 5 ip 15.5.5.254
+!
+interface Vlan6
+ ip address 15.5.6.3 255.255.255.0
+ standby 6 ip 15.5.6.254
+!
+interface Vlan7
+ ip address 15.5.7.3 255.255.255.0
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 15.5.10.1 
+ip route 15.5.100.0 255.255.255.0 15.5.10.1 
 
-interface Vlan16
- ip address 20.5.16.3 255.255.255.0
- standby 2 ip 20.5.16.1
- standby 2 priority 90
- standby 2 preempt
 
-ip routing
-ip route 0.0.0.0 0.0.0.0 20.5.10.1
-ip route 20.5.10.0 255.255.255.0 20.5.15-16.1?
-
-S2 (PC + pripojenie na R1)
+S2
 
 hostname S2
+no ip domain-lookup
 
-vlan 15
- name Red
-vlan 16
- name Black
-vlan 17
- name Native
-
-interface f0/3
- description Link to R1
+!
+interface FastEthernet0/1 -----------------> range f0/1-2
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6
  switchport mode trunk
- switchport trunk allowed vlan 15,16
- switchport trunk native vlan 17
+ channel-group 1 mode passive
+!
+interface FastEthernet0/2
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6
+ switchport mode trunk
+ channel-group 1 mode passive
+!
 
-interface f0/24
- description PC
- switchport access vlan 15
+interface Port-channel1
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6
+ switchport mode trunk
+
+interface FastEthernet0/4
+na PC
+ switchport access vlan 5
  switchport mode access
 
-interface vlan15
- ip address 20.5.15.3 255.255.255.0
- standby 1 ip 20.5.15.1
- standby 1 priority 90
- standby 1 preempt
+interface Vlan6
+ ip address 15.5.6.6 255.255.255.0
+!
+ip default-gateway 15.5.6.254
 
-ip default-gateway 20.5.15.1
+PC
 
-PC (v S2, F0/24)
-
-IP Address: 20.5.15.10
-Subnet Mask: 255.255.255.0
-Default Gateway: 20.5.15.1
-
+ip address 15.5.5.10
+GT 15.5.5.254
