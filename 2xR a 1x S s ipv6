@@ -16,51 +16,59 @@ R2
 
 hostname R2
 no ip domain-lookup
-
+ipv6 unicast-routing
  
 int loopback1
-ip address 2025:5:22:100::1/64
+ipv6 address 2025:5:22:100::1/128
 
 interface GigabitEthernet0/0
- ip address 2025:5:22:10::1/64
+ //ip address 2025:5:22:10::1/64
  no shut
 
- ip dhcp pool vlan 20
- network 2025:5:22:20::/64
- default-router 2025:5:22:20::1
+ ipv6 dhcp pool vlan20
+ address prefix 2025:5:22:20::/64
+ dns-server 2001:4860:4860::8888
+ //default-router 2025:5:22:20::1
  domain-name vaseid.com
 
-ip dhcp excluded-address 2025:5:22:20::1
-ip dhcp excluded-address 2025:5:22:30::1
-ip dhcp excluded-address 2025:5:22:40::1
+//ip dhcp excluded-address 2025:5:22:20::1
+//ip dhcp excluded-address 2025:5:22:30::1
+//ip dhcp excluded-address 2025:5:22:40::1
 
 ip routing
-ip route 2025:5:22:20:: /64 2025:5:22:10::2
-ip route 2025:5:22:30:: /64 2025:5:22:10::2
-ip route 2025:5:22:40:: /64 2025:5:22:10::2
+ipv6 route 2025:5:22:20:: /64 2025:5:22:10::2
+ipv6 route 2025:5:22:30:: /64 2025:5:22:10::2
+ipv6 route 2025:5:22:40:: /64 2025:5:22:10::2
+ipv6 route 2025:5:22::/48 2025:5:22:10::2
 
 R1
 
 hostname R1
 no ip domain-lookup
+ipv6 unicast-routing
 
 interface GigabitEthernet0/0
-ip address 2025:5:22:10::2/64
+//ip address 2025:5:22:10::2/64
+no shut
+
+interface GigabitEthernet0/1
+no shut
 
 interface GigabitEthernet0/1.20
  encapsulation dot1Q 20
- ip address 2025:5:22:20::1/64
- ip helper-address 2025:5:22:10::1
+ ipv6 address 2025:5:22:20::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
 
 interface GigabitEthernet0/1.30
  encapsulation dot1Q 30
- ip address 2025:5:22:30::1/64
+ ipv6 address 2025:5:22:30::1/64
 
 interface GigabitEthernet0/1.40
- encapsulation dot1Q 40
- ip address 2025:5:22:40::1/64
+ encapsulation dot1Q 40 Native
+ ipv6 address 2025:5:22:40::1/64
 
-ip route 2025:5:22:100::/64 2025:5:22:10::1
+ip route 2025:5:22:100::/128 2025:5:22:10::1
 
 S2
 
@@ -70,17 +78,21 @@ pote reload
 
 hostname S2
 no ip domain-lookup
+ipv6 unicast-routing
+
+vlan 20
+vlan 30
+vlan 40
 
 interface FastEthernet0/1
  switchport mode trunk
  switchport trunk native vlan 40
  switchport trunk allowed vlan 20,30,40
  
-
  interface Vlan30
- ip address 2025:5:22:30::30/64
+ ipv6 address 2025:5:22:30::30/64
 
-ip default-gateway 2025:5:22:30::1
+ipv6 default-gateway 2025:5:22:30::1
 
 interface FastEthernet0/2
  switchport mode access
