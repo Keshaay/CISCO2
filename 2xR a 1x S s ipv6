@@ -27,7 +27,7 @@ interface GigabitEthernet0/0
 
  ipv6 dhcp pool vlan20
  address prefix 2025:5:22:20::/64
- dns-server 2001:4860:4860::8888
+ dns-server 2001:4860:4860::8888 - 2025:5:22:20::1?
  //default-router 2025:5:22:20::1
  domain-name vaseid.com
 
